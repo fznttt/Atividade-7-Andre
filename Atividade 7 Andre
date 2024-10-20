@@ -1,0 +1,63 @@
+--Parte 1: Criação de Tabelas
+CREATE TABLE IF NOT EXISTS produtos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT,
+    categoria TEXT,
+    preco REAL,
+    estoque INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS vendas (
+    id_venda INTEGER PRIMARY KEY AUTOINCREMENT,
+    produto_id INTEGER,
+    quantidade INTEGER,
+    data_venda DATE,
+    total REAL,
+    FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
+
+--Parte 2: Carga de Dados
+INSERT INTO produtos (nome, categoria, preco, estoque)
+VALUES
+('Produto 1', 'Categoria A', 10.50, 100),
+('Produto 2', 'Categoria B', 25.00, 200),
+('Produto 3', 'Categoria A', 15.75, 150),
+('Produto 4', 'Categoria C', 50.00, 75),
+('Produto 5', 'Categoria B', 12.00, 300),
+('Produto 6', 'Categoria A', 30.25, 180),
+('Produto 7', 'Categoria C', 45.00, 90),
+('Produto 8', 'Categoria B', 20.75, 120),
+('Produto 9', 'Categoria A', 18.00, 210),
+('Produto 10', 'Categoria C', 35.50, 60),
+('Produto 50', 'Categoria C', 30.75, 150);
+
+INSERT INTO vendas (produto_id, quantidade, data_venda, total)
+VALUES
+(1, 2, '2024-10-20', 21.00),
+(2, 1, '2024-10-20', 25.00),
+(3, 4, '2024-10-19', 63.00),
+(4, 3, '2024-10-18', 150.00);
+
+--Parte 3: Criação de Índices
+CREATE INDEX IF NOT EXISTS idx_categoria ON produtos (categoria);
+
+CREATE INDEX IF NOT EXISTS idx_produto_id ON vendas (produto_id);
+
+--Parte 4: Simulação de Transação de Venda
+BEGIN TRANSACTION;
+
+UPDATE produtos
+SET estoque = estoque - 2
+WHERE id = 1;
+
+INSERT INTO vendas (produto_id, quantidade, data_venda, total)
+VALUES (1, 2, DATE('now'), 21.00);
+
+SELECT estoque FROM produtos WHERE id = 1;
+
+COMMIT;
+
+--Parte 5: Consultas de Verificação
+SELECT * FROM produtos WHERE estoque > 0;
+
+SELECT * FROM vendas WHERE data_venda = '2024-10-20';
